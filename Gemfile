@@ -1,5 +1,8 @@
 source 'https://rubygems.org'
 
+gem 'rake'
+gem 'fog-aws', '~> 1.37'
+
 group :development, :test do
   gem 'yard'
   gem 'rspec'
@@ -7,4 +10,9 @@ group :development, :test do
   gem 'simplecov'
   gem 'rubocop'
   gem 'pry'
+end
+
+
+group :test do
+  gem 'rubocop'
 end
