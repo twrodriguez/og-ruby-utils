@@ -43,11 +43,4 @@ module Errors
     extend HttpStatusError
     @code = 503
   end
-
-  # Inherited from OpenGov
-  InvalidEntity = OpenGov::Errors::InvalidEntity
-  InvalidSelection = OpenGov::Errors::InvalidSelection
-  InvalidTapiRequest = OpenGov::Errors::InvalidTapiRequest
-  InvalidTapiResponse = OpenGov::Errors::InvalidTapiResponse
-  MissingTapiData = OpenGov::Errors::MissingTapiData
 end

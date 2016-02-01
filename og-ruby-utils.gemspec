@@ -5,7 +5,7 @@ Gem::Specification.new do |s|
   s.version           = version
   s.date              = '2016-02-01'
   s.summary           = "OpenGov ruby Utils"
-  s.description       = "Comonly used utils and connectors for OpenGov rails stack projects"
+  s.description       = "Commonly used utils and connectors for OpenGov rails stack projects"
   s.authors           = ["OpenGov"]
   s.email             = 'dev@opengov.com'
   s.require_paths     = ['lib']

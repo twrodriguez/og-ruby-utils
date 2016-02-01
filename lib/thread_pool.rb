@@ -1,5 +1,5 @@
 class ThreadPool
-  CONCURRENCY_LIMIT = (Settings['concurrency_limit'] || Float::INFINITY).to_f
+  CONCURRENCY_LIMIT = Float::INFINITY.to_f
 
   def self.parallel(items, opts = {})
     fail 'No block provided' unless block_given?
