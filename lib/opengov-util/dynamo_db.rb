@@ -16,14 +16,6 @@
 class OpenGov::Util::DynamoDb
   attr_reader :table, :throughput
 
-  def self.extended(_klass)
-    require_relative 'fog_dynamodb_20120810'
-  end
-
-  def self.included(_klass)
-    require_relative 'fog_dynamodb_20120810'
-  end
-
   ALLOW_ARCHITECT = Rails.env.in?(%w(development travis test)) || ENV['DB_ARCHITECT'] == 'true'
 
   #################
@@ -33,8 +25,7 @@ class OpenGov::Util::DynamoDb
   #
   # Generate a new client
   #
-  def initialize(params = nil)
-    params ||= Settings.aws
+  def initialize(params = {})
     params = params.symbolize_keys # Yes, make a copy
     Fog::AWS::DynamoDB.new(params.slice(*%i(host port scheme aws_access_key_id aws_secret_access_key region)))
   end
