@@ -13,7 +13,7 @@
 # S     A String data type.         Type: String
 # SS    A String Set data type.     Type: array of Strings
 #
-module DynamoDb
+class OpenGov::Util::DynamoDb
   attr_reader :table, :throughput
 
   def self.extended(_klass)
@@ -33,7 +33,7 @@ module DynamoDb
   #
   # Generate a new client
   #
-  def new_db_connection(params = nil)
+  def initialize(params = nil)
     params ||= Settings.aws
     params = params.symbolize_keys # Yes, make a copy
     Fog::AWS::DynamoDB.new(params.slice(*%i(host port scheme aws_access_key_id aws_secret_access_key region)))

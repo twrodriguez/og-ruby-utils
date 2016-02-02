@@ -1,4 +1,4 @@
-class ThreadPool
+class OpenGov::Util::ThreadPool
   CONCURRENCY_LIMIT = Float::INFINITY.to_f
 
   def self.parallel(items, opts = {})
