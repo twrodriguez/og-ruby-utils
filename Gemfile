@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
 gem 'rake'
-gem 'fog-aws', '~> 1.37'
+gem 'fog-aws', '~> 0.9.1'
 
 group :development, :test do
   gem 'yard'

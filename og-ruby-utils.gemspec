@@ -14,5 +14,5 @@ Gem::Specification.new do |s|
   s.license           = 'Nonstandard'
 
   s.require_paths     = ["lib"]
-  s.add_dependency('fog-aws', '~> 1.37')
+  s.add_dependency('fog-aws', '~> 0.9.1')
 end
