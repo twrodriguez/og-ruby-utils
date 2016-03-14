@@ -1,5 +1,7 @@
 require 'fog/aws'
-require 'Set'
+require 'set'
+require 'stringio'
+require 'bigdecimal'
 # rubocop:disable ModuleLength
 #
 # Amazon DynamoDB Data Types:
@@ -48,7 +50,7 @@ class OpenGov::Util::DynamoDb
     return @table_exists if @table_exists
 
     # Iff doesn't exist, create
-    connection.create_table(table, schema, throughput)
+    connection.create_table(table, schema, throughput, attribute_definitions)
     @table_exists = true
   end
 
@@ -354,11 +356,24 @@ class OpenGov::Util::DynamoDb
     when Symbol then 'S'
     when Numeric then 'N'
     when StringIO then 'B'
+    when Set then get_set_type(obj)
     when true, false then 'BOOL'
     when nil then 'NULL'
     else
       msg = "unsupported type, expected Hash, Array, Set, String, Numeric, "
       msg << "IO, true, false, or nil, got #{obj.class.name}"
+      raise ArgumentError, msg
+    end
+  end
+
+  def get_set_type(set)
+    case set.first
+    when String, Symbol then 'SS'
+    when STRINGY_TEST then 'SS'
+    when Numeric then 'NS'
+    when StringIO, IO then 'BS'
+    else
+      msg = "set types only support String, Numeric, or IO objects"
       raise ArgumentError, msg
     end
   end
