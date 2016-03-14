@@ -1,4 +1,7 @@
 require 'fog/aws'
+require 'set'
+require 'stringio'
+require 'bigdecimal'
 # rubocop:disable ModuleLength
 #
 # Amazon DynamoDB Data Types:
@@ -341,6 +344,39 @@ class OpenGov::Util::DynamoDb
   end
 
   private
+
+  #
+  # Return value's type mapped to the Dynamo's types
+  #
+  def get_type(obj)
+    case obj
+    when Hash then 'M'
+    when Array then 'L'
+    when String then 'S'
+    when Symbol then 'S'
+    when Numeric then 'N'
+    when StringIO then 'B'
+    when Set then get_set_type(obj)
+    when true, false then 'BOOL'
+    when nil then 'NULL'
+    else
+      msg = "unsupported type, expected Hash, Array, Set, String, Numeric, "
+      msg << "IO, true, false, or nil, got #{obj.class.name}"
+      raise ArgumentError, msg
+    end
+  end
+
+  def get_set_type(set)
+    case set.first
+    when String, Symbol then 'SS'
+    when Numeric then 'NS'
+    when StringIO, IO then 'BS'
+    else
+      msg = "set types only support String, Numeric, or IO objects"
+      raise ArgumentError, msg
+    end
+  end
+
 
   #
   # Remove DynamoDB-specific cruft
