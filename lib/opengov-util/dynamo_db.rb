@@ -1,3 +1,4 @@
+require 'fog/aws'
 # rubocop:disable ModuleLength
 #
 # Amazon DynamoDB Data Types:
