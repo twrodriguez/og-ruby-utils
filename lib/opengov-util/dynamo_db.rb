@@ -369,7 +369,6 @@ class OpenGov::Util::DynamoDb
   def get_set_type(set)
     case set.first
     when String, Symbol then 'SS'
-    when STRINGY_TEST then 'SS'
     when Numeric then 'NS'
     when StringIO, IO then 'BS'
     else
