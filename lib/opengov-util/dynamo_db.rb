@@ -1,4 +1,5 @@
 require 'fog/aws'
+require 'Set'
 # rubocop:disable ModuleLength
 #
 # Amazon DynamoDB Data Types:
@@ -47,7 +48,7 @@ class OpenGov::Util::DynamoDb
     return @table_exists if @table_exists
 
     # Iff doesn't exist, create
-    connection.create_table(table, schema, throughput, attribute_definitions)
+    connection.create_table(table, schema, throughput)
     @table_exists = true
   end
 
@@ -341,6 +342,27 @@ class OpenGov::Util::DynamoDb
   end
 
   private
+
+  #
+  # Return value's type mapped to the Dynamo's types
+  #
+  def get_type(obj)
+    case obj
+    when Hash then 'M'
+    when Array then 'L'
+    when String then 'S'
+    when Symbol then 'S'
+    when Numeric then 'N'
+    when StringIO then 'B'
+    when true, false then 'BOOL'
+    when nil then 'NULL'
+    else
+      msg = "unsupported type, expected Hash, Array, Set, String, Numeric, "
+      msg << "IO, true, false, or nil, got #{obj.class.name}"
+      raise ArgumentError, msg
+    end
+  end
+
 
   #
   # Remove DynamoDB-specific cruft
