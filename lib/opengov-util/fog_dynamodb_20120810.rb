@@ -26,19 +26,6 @@ module Fog
             idempotent: true
           )
         end
-
-        private
-
-        alias_method :original_request, :request
-
-        # Override API version target
-        def request(params)
-          params[:headers] ||= {}
-          if params[:headers]['x-amz-target']
-            params[:headers]['x-amz-target'].gsub!(/DynamoDB_20111205/, 'DynamoDB_20120810')
-          end
-          original_request(params)
-        end
       end
     end
   end
