@@ -13,6 +13,12 @@ class OpenGov::Util::LazyCollectionEnumerator < ::Enumerator::Lazy
     end
   end
 
+  def pluck_to_h(*args)
+    self.class.new(self) do |yielder, value|
+      yielder << _pluck_to_h_block(args).call(value)
+    end
+  end
+
   def where(conditions = {})
     self.class.new(self) do |yielder, value|
       should_include = _all_block(conditions).call(value)
