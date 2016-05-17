@@ -4,18 +4,16 @@ class OpenGov::Util::Collection
   include ::Enumerable
   include OpenGov::Util::CollectionMethods
 
-  def initialize(array_like = [])
-    unless array_like.is_a?(::Enumerable) && array_like.respond_to?(:dup)
+  def initialize(enum = [])
+    unless enum.is_a?(::Enumerable) && enum.respond_to?(:dup)
       fail TypeError, 'Argument must be a dup-able enumerable object'
     end
 
-    @enumerable = array_like
+    @enumerable = enum
   end
 
   def dup
-    ret = super
-    ret.instance_variable_set('@enumerable', @enumerable.dup)
-    ret
+    super.tap { |c| c.instance_variable_set('@enumerable', @enumerable.dup) }
   end
 
   def each(&block)
@@ -23,7 +21,7 @@ class OpenGov::Util::Collection
   end
 
   def lazy
-    OpenGov::Util::LazyCollectionEnumerator.new(self, self.size) do |yielder, value|
+    OpenGov::Util::LazyCollectionEnumerator.new(self, size) do |yielder, value|
       yielder << value
     end
   end
@@ -45,27 +43,19 @@ class OpenGov::Util::Collection
   end
 
   def pluck(*args)
-    ret = dup
-    ret.pluck!(*args)
-    ret
+    dup.tap { |c| c.pluck!(*args) }
   end
 
   def pluck_to_h(*args)
-    ret = dup
-    ret.pluck_to_h!(*args)
-    ret
+    dup.tap { |c| c.pluck_to_h!(*args) }
   end
 
   def where(conditions = {})
-    ret = dup
-    ret.where!(conditions)
-    ret
+    dup.tap { |c| c.where!(conditions) }
   end
 
   def where_not(conditions = {})
-    ret = dup
-    ret.where_not!(conditions)
-    ret
+    dup.tap { |c| c.where_not!(conditions) }
   end
 
   def respond_to?(method_name)
