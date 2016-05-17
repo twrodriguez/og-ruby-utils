@@ -13,9 +13,16 @@ module OpenGov::Util::CollectionMethods
     end
   end
 
+  def _pluck_to_h_block(args)
+    lambda do |item|
+      args.each_with_object({}) { |arg, memo| memo[arg] = item[arg] }
+    end
+  end
+
   def _all_block(conditions)
     lambda do |item|
       conditions.all? do |field, predicate|
+        # collection_match will be used by the _matcher method for deep matching
         _matcher(item[field], predicate, collection_match: :all?)
       end
     end
@@ -24,6 +31,7 @@ module OpenGov::Util::CollectionMethods
   def _any_block(conditions)
     lambda do |item|
       conditions.any? do |field, predicate|
+        # collection_match will be used by the _matcher method for deep matching
         _matcher(item[field], predicate, collection_match: :any?)
       end
     end
