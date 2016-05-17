@@ -13,9 +13,9 @@ class OpenGov::Util::LazyCollectionEnumerator < ::Enumerator::Lazy
     end
   end
 
-  def pluck_to_h(*args)
+  def pluck_slice(*args)
     chain do |yielder, value|
-      yielder << _pluck_to_h_block(args).call(value)
+      yielder << _pluck_slice_block(args).call(value)
     end
   end
 

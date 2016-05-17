@@ -69,16 +69,16 @@ RSpec.shared_examples 'collection' do
     end
   end
 
-  describe '#pluck_to_h' do
+  describe '#pluck_slice' do
     it 'returns a different subject' do
-      collection_2 = subject.pluck_to_h :a
+      collection_2 = subject.pluck_slice :a
 
       expect(subject.size).to eq(hashes.size)
       expect(subject).not_to eq(collection_2)
     end
 
     it 'plucks with a single argument' do
-      collection_2 = subject.pluck_to_h :a
+      collection_2 = subject.pluck_slice :a
 
       expect(subject.all? { |item| item.is_a? Hash }).to be true
       expect(collection_2.all? { |item| item.is_a? Hash }).to be true
@@ -86,7 +86,7 @@ RSpec.shared_examples 'collection' do
     end
 
     it 'plucks with multiple arguments' do
-      collection_2 = subject.pluck_to_h :a, :b
+      collection_2 = subject.pluck_slice :a, :b
 
       expect(subject.all? { |item| item.is_a? Hash }).to be true
       expect(collection_2.all? { |item| item.is_a? Hash }).to be true

@@ -13,7 +13,7 @@ module OpenGov::Util::CollectionMethods
     end
   end
 
-  def _pluck_to_h_block(args)
+  def _pluck_slice_block(args)
     lambda do |item|
       args.each_with_object({}) { |arg, memo| memo[arg] = item[arg] }
     end

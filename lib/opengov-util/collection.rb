@@ -30,8 +30,8 @@ class OpenGov::Util::Collection
     map!(&_pluck_block(args))
   end
 
-  def pluck_to_h!(*args)
-    map!(&_pluck_to_h_block(args))
+  def pluck_slice!(*args)
+    map!(&_pluck_slice_block(args))
   end
 
   def where!(conditions = {})
@@ -46,8 +46,8 @@ class OpenGov::Util::Collection
     dup.tap { |c| c.pluck!(*args) }
   end
 
-  def pluck_to_h(*args)
-    dup.tap { |c| c.pluck_to_h!(*args) }
+  def pluck_slice(*args)
+    dup.tap { |c| c.pluck_slice!(*args) }
   end
 
   def where(conditions = {})
