@@ -53,7 +53,7 @@ RSpec.describe OpenGov::Util::Collection, type: :library do
   #
   context 'immediate methods' do
     subject { OpenGov::Util::Collection.new(hashes) }
-    it_behaves_like 'collection'
+    it_behaves_like 'collection' # Using "hashes"
   end
 
   #
@@ -61,6 +61,6 @@ RSpec.describe OpenGov::Util::Collection, type: :library do
   #
   context 'lazy methods' do
     subject { OpenGov::Util::Collection.new(hashes).lazy }
-    it_behaves_like 'collection'
+    it_behaves_like 'collection' # Using "hashes"
   end
 end

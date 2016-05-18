@@ -1,4 +1,4 @@
-RSpec.shared_examples 'collection' do
+RSpec.shared_examples 'collection' do # Assumes "hashes" is defined in a `let` variable
   describe '#where' do
     it 'returns a different subject' do
       collection_2 = subject.where a: 3
