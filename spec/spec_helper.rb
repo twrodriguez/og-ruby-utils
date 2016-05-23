@@ -7,7 +7,7 @@ SimpleCov.start do
 end
 
 require 'rspec'
-require 'opengov-util'
+require 'opengov/util'
 
 RSpec.configure do |config|
   config.mock_with :rspec do |c|

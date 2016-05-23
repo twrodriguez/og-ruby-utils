@@ -1,7 +1,7 @@
 version = File.read(File.expand_path('../VERSION', __FILE__)).strip
 
 Gem::Specification.new do |s|
-  s.name              = 'og-ruby-utils'
+  s.name              = 'opengov-util'
   s.version           = version
   s.date              = '2016-02-01'
   s.summary           = "OpenGov ruby Utils"
@@ -14,5 +14,6 @@ Gem::Specification.new do |s|
   s.license           = 'Nonstandard'
 
   s.require_paths     = ["lib"]
+  s.add_dependency('multi_json', '~> 1.0')
   s.add_dependency('fog-aws', '~> 0.9.1')
 end

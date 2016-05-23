@@ -55,9 +55,7 @@ class Hash
   #
   unless instance_methods.include? :symbolize_keys
     def symbolize_keys
-      new_hsh = dup
-      new_hsh.symbolize_keys!
-      new_hsh
+      dup.tap { |h| h.symbolize_keys! }
     end
   end
 
@@ -66,9 +64,7 @@ class Hash
   #
   unless instance_methods.include? :select_keys
     def select_keys(other)
-      target = dup
-      target.select_keys!(other)
-      target
+      dup.tap { |h| h.select_keys!(other) }
     end
   end
 
@@ -77,9 +73,7 @@ class Hash
   #
   unless instance_methods.include? :reject_keys
     def reject_keys(other)
-      target = dup
-      target.reject_keys!(other)
-      target
+      dup.tap { |h| h.reject_keys!(args) }
     end
   end
 
@@ -88,9 +82,16 @@ class Hash
   #
   unless instance_methods.include? :slice
     def slice(*args)
-      target = dup
-      target.select_keys!(args)
-      target
+      dup.tap { |h| h.select_keys!(args) }
+    end
+  end
+
+  #
+  # slice!
+  #
+  unless instance_methods.include? :slice!
+    def slice!(*args)
+      select_keys!(args)
     end
   end
 

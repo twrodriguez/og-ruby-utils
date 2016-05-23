@@ -76,6 +76,7 @@ PLATFORMS
 
 DEPENDENCIES
   fog-aws (~> 0.9.1)
+  multi_json (~> 1.0)
   pry
   rake
   rspec
@@ -84,4 +85,4 @@ DEPENDENCIES
   yard
 
 BUNDLED WITH
-   1.10.6
+   1.11.2

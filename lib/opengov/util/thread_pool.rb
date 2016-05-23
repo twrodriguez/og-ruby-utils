@@ -3,18 +3,23 @@ class OpenGov::Util::ThreadPool
 
   def self.parallel(items, opts = {})
     fail 'No block provided' unless block_given?
-    opts.reverse_merge!(timeout: 5, concurrency_limit: ThreadPool::CONCURRENCY_LIMIT)
+    opts = {
+      timeout: 5,
+      concurrency_limit: ThreadPool::CONCURRENCY_LIMIT,
+      return_key: :id.to_proc
+    }.merge(opts)
 
     thread_returns = {}
     pool = new(opts[:concurrency_limit])
     items.each do |item|
       pool.push do
+        return_key = opts[:return_key].call(item)
         begin
           Timeout.timeout(opts[:timeout]) do
-            thread_returns[item.id] = yield(item)
+            thread_returns[return_key] = yield(item)
           end
         rescue Timeout::Error => e
-          thread_returns[item.id] = e
+          thread_returns[return_key] = e
         end
       end
     end
