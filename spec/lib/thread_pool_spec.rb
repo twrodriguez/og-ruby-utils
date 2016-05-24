@@ -19,7 +19,7 @@ RSpec.describe OpenGov::Util::ThreadPool, type: :library do
       end
 
       thread_pool.push { returns[-1] = 'huzzah' }
-      expect(returns).to eq({})
+      expect(returns.size).not_to eq(11)
       thread_pool.join
 
       elapsed = Time.now - timer
@@ -42,6 +42,7 @@ RSpec.describe OpenGov::Util::ThreadPool, type: :library do
       end
 
       thread_pool.push { returns[-1] = 'huzzah' }
+      expect(returns.size).not_to eq(11)
       thread_pool.join
 
       elapsed = Time.now - timer
@@ -73,6 +74,14 @@ RSpec.describe OpenGov::Util::ThreadPool, type: :library do
       expect(returns.size).to eq(11)
       expect(returns).to include(0 => 1, 1 => 2, 2 => 3, -1 => 'huzzah')
       expect(elapsed).to be > 0.8
+    end
+
+    it 'can overrides the default concurrency_limit' do
+      before_val = OpenGov::Util::ThreadPool.concurrency_limit
+      OpenGov::Util::ThreadPool.concurrency_limit = 42
+      expect(thread_pool.instance_variable_get('@limit')).to eq(42)
+
+      OpenGov::Util::ThreadPool.concurrency_limit = before_val
     end
   end
 end

@@ -1,11 +1,16 @@
 class OpenGov::Util::ThreadPool
-  CONCURRENCY_LIMIT = Float::INFINITY.to_f
+  class << self
+    attr_accessor :concurrency_limit
+  end
+
+  # Default Value
+  @concurrency_limit = Float::INFINITY.to_f
 
   def self.parallel(items, opts = {})
     fail 'No block provided' unless block_given?
     opts = {
       timeout: 5,
-      concurrency_limit: CONCURRENCY_LIMIT,
+      concurrency_limit: @concurrency_limit,
       return_key: :id.to_proc
     }.merge(opts)
 
@@ -27,18 +32,18 @@ class OpenGov::Util::ThreadPool
     thread_returns
   end
 
-  def initialize(concurrency_limit = CONCURRENCY_LIMIT)
+  def initialize(concurrency_limit = nil)
     @pool = []
-    @concurrency_limit = concurrency_limit
+    @limit = concurrency_limit || self.class.concurrency_limit
   end
 
   def push(*args, &block)
     fail 'No block provided' unless block_given?
-    if @concurrency_limit == 1
+    if @limit == 1
       yield(*args)
     else
       @pool << Thread.new(*args, &block)
-      join if @pool.size >= @concurrency_limit
+      join if @pool.size >= @limit
     end
   end
 

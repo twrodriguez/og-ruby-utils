@@ -10,6 +10,7 @@ require 'rspec'
 require 'opengov/util'
 
 RSpec.configure do |config|
+  config.order = 'random'
   config.mock_with :rspec do |c|
     c.syntax = [:should, :expect]
   end
