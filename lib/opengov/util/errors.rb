@@ -176,7 +176,6 @@ module OpenGov
         @code = 412
       end
 
-
       class RequestEntityTooLarge < ::StandardError
         extend HttpStatusError
         @code = 413

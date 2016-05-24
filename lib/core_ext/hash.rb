@@ -20,7 +20,10 @@ class Hash
   # select_keys!
   #
   unless instance_methods.include? :select_keys!
-    def select_keys!(other, &block)
+    def select_keys!(other = nil, &block)
+      fail ArgumentError, 'Must provide exactly one argument or a block' if other && block_given?
+      fail ArgumentError, 'Must provide one argument or a block' unless other || block_given?
+
       unless block_given?
         # type_assert(other, Array, Hash, Set, Regexp)
         if other.is_a? Regexp
@@ -38,6 +41,9 @@ class Hash
   #
   unless instance_methods.include? :reject_keys!
     def reject_keys!(other, &block)
+      fail ArgumentError, 'Must provide exactly one argument or a block' if other && block_given?
+      fail ArgumentError, 'Must provide one argument or a block' unless other || block_given?
+
       unless block_given?
         # type_assert(other, Array, Hash, Set, Regexp)
         if other.is_a? Regexp
@@ -55,7 +61,7 @@ class Hash
   #
   unless instance_methods.include? :symbolize_keys
     def symbolize_keys
-      dup.tap { |h| h.symbolize_keys! }
+      dup.tap(&:symbolize_keys!)
     end
   end
 
@@ -63,8 +69,11 @@ class Hash
   # select_keys
   #
   unless instance_methods.include? :select_keys
-    def select_keys(other)
-      dup.tap { |h| h.select_keys!(other) }
+    def select_keys(other = nil, &block)
+      fail ArgumentError, 'Must provide exactly one argument or a block' if other && block_given?
+      fail ArgumentError, 'Must provide one argument or a block' unless other || block_given?
+
+      dup.tap { |h| h.select_keys!(other, &block) }
     end
   end
 
@@ -72,8 +81,11 @@ class Hash
   # reject_keys
   #
   unless instance_methods.include? :reject_keys
-    def reject_keys(other)
-      dup.tap { |h| h.reject_keys!(args) }
+    def reject_keys(other = nil, &block)
+      fail ArgumentError, 'Must provide exactly one argument or a block' if other && block_given?
+      fail ArgumentError, 'Must provide one argument or a block' unless other || block_given?
+
+      dup.tap { |h| h.reject_keys!(other, &block) }
     end
   end
 

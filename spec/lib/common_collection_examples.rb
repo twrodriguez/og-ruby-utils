@@ -80,7 +80,7 @@ RSpec.shared_examples 'collection' do # Assumes "hashes" is defined in a `let` v
 
       expect(subject.all? { |item| item.is_a? Hash }).to be true
       expect(collection_2.all? { |item| item.is_a? Hash }).to be true
-      expect(collection_2).to contain_exactly({a: 1}, {a: 2}, {a: 3}, {a: 4}, {a: 5})
+      expect(collection_2).to contain_exactly({ a: 1 }, { a: 2 }, { a: 3 }, { a: 4 }, a: 5)
     end
 
     it 'plucks with multiple arguments' do

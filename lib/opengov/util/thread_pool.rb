@@ -5,7 +5,7 @@ class OpenGov::Util::ThreadPool
     fail 'No block provided' unless block_given?
     opts = {
       timeout: 5,
-      concurrency_limit: ThreadPool::CONCURRENCY_LIMIT,
+      concurrency_limit: CONCURRENCY_LIMIT,
       return_key: :id.to_proc
     }.merge(opts)
 
@@ -27,7 +27,7 @@ class OpenGov::Util::ThreadPool
     thread_returns
   end
 
-  def initialize(concurrency_limit = ThreadPool::CONCURRENCY_LIMIT)
+  def initialize(concurrency_limit = CONCURRENCY_LIMIT)
     @pool = []
     @concurrency_limit = concurrency_limit
   end
