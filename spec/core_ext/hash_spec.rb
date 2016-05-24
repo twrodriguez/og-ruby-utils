@@ -24,8 +24,8 @@ RSpec.describe Hash, type: :library do
 
   describe '#select_keys' do
     it 'fails as expected' do
-      expect{ hash.select_keys(['a'], &:nil?) }.to raise_exception(ArgumentError)
-      expect{ hash.select_keys }.to raise_exception(ArgumentError)
+      expect { hash.select_keys(['a'], &:nil?) }.to raise_exception(ArgumentError)
+      expect { hash.select_keys }.to raise_exception(ArgumentError)
     end
 
     it 'works as expected' do
@@ -55,8 +55,8 @@ RSpec.describe Hash, type: :library do
 
   describe '#reject_keys' do
     it 'fails as expected' do
-      expect{ hash.reject_keys(['a'], &:nil?) }.to raise_exception(ArgumentError)
-      expect{ hash.reject_keys }.to raise_exception(ArgumentError)
+      expect { hash.reject_keys(['a'], &:nil?) }.to raise_exception(ArgumentError)
+      expect { hash.reject_keys }.to raise_exception(ArgumentError)
     end
 
     it 'works as expected' do

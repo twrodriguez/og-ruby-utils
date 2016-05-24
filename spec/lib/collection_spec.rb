@@ -4,17 +4,17 @@ require_relative 'common_collection_examples'
 RSpec.describe OpenGov::Util::Collection, type: :library do
   let(:hashes) do
     [
-      {a: 1, b: 2, c: 9},
-      {a: 2, b: 3, c: 8},
-      {a: 3, b: 4, c: 7},
-      {a: 4, b: nil, c: 6},
-      {a: 5, c: 5}
+      { a: 1, b: 2, c: 9 },
+      { a: 2, b: 3, c: 8 },
+      { a: 3, b: 4, c: 7 },
+      { a: 4, b: nil, c: 6 },
+      { a: 5, c: 5 }
     ]
   end
 
   describe '#initialize' do
     it 'can initialize from array-like objects' do
-      collection = OpenGov::Util::Collection.new()
+      collection = OpenGov::Util::Collection.new
       expect(collection).to be_empty
     end
 
@@ -39,7 +39,7 @@ RSpec.describe OpenGov::Util::Collection, type: :library do
 
   describe '#lazy' do
     it 'returns a LazyCollectionEnumerator' do
-      expect(OpenGov::Util::Collection.new().lazy.class.ancestors).to include(::Enumerator::Lazy)
+      expect(OpenGov::Util::Collection.new.lazy.class.ancestors).to include(::Enumerator::Lazy)
     end
 
     it 'can initialize with an infinite range' do

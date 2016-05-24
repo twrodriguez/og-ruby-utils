@@ -1,0 +1,20 @@
+sudo: false
+
+language: ruby
+rvm:
+  - 2.2.1
+
+cache:
+  bundler: true
+
+script:
+  - bundle exec rubocop
+  - RAILS_ENV=test bundle exec rspec
+
+notifications:
+  email:
+    recipients:
+      - alerts+ci@opengov.com
+    on_success: change
+    on_failure: always
+  slack: opengov:rgZXs6Fiyugn5y4TMhxSRIRq

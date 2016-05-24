@@ -1,6 +1,5 @@
 require_relative 'fog_dynamodb_20120810'
 
-# rubocop:disable ModuleLength
 #
 # Amazon DynamoDB Data Types:
 #
@@ -20,7 +19,7 @@ class OpenGov::Util::DynamoDb
 
   ALLOW_ARCHITECT = begin
     allow_architect = ENV['DB_ARCHITECT'] == 'true'
-    allow_architect ||= defined?(Rails) && Rails.env.in?(%w(development travis test))
+    allow_architect || defined?(Rails) && Rails.env.in?(%w(development travis test))
   end
 
   #################
@@ -377,4 +376,3 @@ class OpenGov::Util::DynamoDb
     end
   end
 end
-# rubocop:enable ModuleLength

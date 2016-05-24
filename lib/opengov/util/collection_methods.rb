@@ -37,7 +37,7 @@ module OpenGov::Util::CollectionMethods
     end
   end
 
-  def _matcher(value, predicate, opts = {})
+  def _matcher(value, predicate, _opts = {})
     case predicate
     when Hash
       # TODO: Implement deep-match logic
