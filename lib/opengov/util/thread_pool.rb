@@ -4,17 +4,11 @@ class OpenGov::Util::ThreadPool
   end
 
   # Default Value
-  @concurrency_limit = Float::INFINITY.to_f
+  @concurrency_limit = 256
 
-  def self.parallel(items, opts = {}, &block)
-    _parallel_exec(items, { return_key: :id.to_proc }.merge(opts), &block)
-  end
-
-  def self.parallel_map(items, opts = {}, &block)
-    thread_returns = _parallel_exec(items, opts - [:return_key], &block)
-    thread_returns.size.times.map { |i| thread_returns[i] }
-  end
-
+  #
+  # Thread Pool methods
+  #
   def initialize(concurrency_limit = nil)
     @pool = []
     @limit = concurrency_limit || self.class.concurrency_limit
@@ -39,36 +33,49 @@ class OpenGov::Util::ThreadPool
     @pool.clear
   end
 
-  private
+  #
+  # Class Helpers
+  #
+  class << self
+    def parallel(items, opts = {}, &block)
+      _parallel_exec(items, { return_key: :id.to_proc }.merge(opts), &block)
+    end
 
-  def self._parallel_exec(items, opts = {})
-    fail 'No block provided' unless block_given?
-    opts = {
-      timeout: 5,
-      concurrency_limit: @concurrency_limit
-    }.merge(opts)
+    def parallel_map(items, opts = {}, &block)
+      thread_returns = _parallel_exec(items, opts - [:return_key], &block)
+      thread_returns.size.times.map { |i| thread_returns[i] }
+    end
 
-    thread_returns = {}
-    pool = new(opts[:concurrency_limit])
-    items.each_with_index do |item, index|
-      if opts[:return_key].is_a? Proc
-        return_key = opts[:return_key].call(item)
-      else
-        return_key = index
-      end
+    private
 
-      pool.push do
-        begin
-          Timeout.timeout(opts[:timeout]) do
-            thread_returns[return_key] = yield(item)
+    def _parallel_exec(items, opts = {})
+      fail 'No block provided' unless block_given?
+      opts = {
+        timeout: 5,
+        concurrency_limit: @concurrency_limit
+      }.merge(opts)
+
+      thread_returns = {}
+      pool = new(opts[:concurrency_limit])
+      items.each_with_index do |item, index|
+        if opts[:return_key].is_a? Proc
+          return_key = opts[:return_key].call(item)
+        else
+          return_key = index
+        end
+
+        pool.push do
+          begin
+            Timeout.timeout(opts[:timeout]) do
+              thread_returns[return_key] = yield(item)
+            end
+          rescue Timeout::Error => e
+            thread_returns[return_key] = e
           end
-        rescue Timeout::Error => e
-          thread_returns[return_key] = e
         end
       end
+      pool.join
+      thread_returns
     end
-    pool.join
-    thread_returns
   end
-  private_class_method :_parallel_exec
 end

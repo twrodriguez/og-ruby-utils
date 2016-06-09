@@ -1,4 +1,5 @@
 require_relative 'lazy_collection_enumerator'
+require_relative 'thread_pool'
 
 class OpenGov::Util::Collection
   include ::Enumerable
@@ -56,6 +57,10 @@ class OpenGov::Util::Collection
 
   def where_not(conditions = {})
     dup.tap { |c| c.where_not!(conditions) }
+  end
+
+  def parallel_map(parallel_opts = {}, &block)
+    OpenGov::Util::ThreadPool.parallel_map(self, parallel_opts, &block)
   end
 
   def respond_to?(method_name)
