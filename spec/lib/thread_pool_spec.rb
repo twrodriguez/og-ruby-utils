@@ -5,6 +5,24 @@ RSpec.describe OpenGov::Util::ThreadPool, type: :library do
   let(:limited_thread_pool) { OpenGov::Util::ThreadPool.new(2) }
   let(:thread_pool_no_concurrency) { OpenGov::Util::ThreadPool.new(1) }
 
+  describe '.parallel_map' do
+    it 'returns things in the same order they were passed in' do
+      items = 1..10
+      seq_items = items.map { |n| n * 2 }
+      parallel_items = OpenGov::Util::ThreadPool.parallel_map(items) { |n| n * 2 }
+      expect(seq_items).to eq(parallel_items)
+    end
+  end
+
+  describe '.parallel' do
+    it 'returns a hash of items based on a custom block' do
+      items = 1..10
+      seq_items = items.each_with_object({}) { |n,memo| memo[n] = n * 2 }
+      parallel_items = OpenGov::Util::ThreadPool.parallel(items, return_key: -> n { n }) { |n| n * 2 }
+      expect(seq_items).to eq(parallel_items)
+    end
+  end
+
   describe '#initialize' do
     it 'runs things in parallel' do
       timer = Time.now
