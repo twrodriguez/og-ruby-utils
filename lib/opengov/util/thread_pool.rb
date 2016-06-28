@@ -52,6 +52,7 @@ class OpenGov::Util::ThreadPool
       fail 'No block provided' unless block_given?
       opts = {
         timeout: 5,
+        capture_timeout: true,
         concurrency_limit: @concurrency_limit
       }.merge(opts)
 
@@ -70,6 +71,7 @@ class OpenGov::Util::ThreadPool
               thread_returns[return_key] = yield(item)
             end
           rescue Timeout::Error => e
+            raise unless opts[:capture_timeout]
             thread_returns[return_key] = e
           end
         end

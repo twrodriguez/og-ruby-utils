@@ -12,6 +12,27 @@ RSpec.describe OpenGov::Util::ThreadPool, type: :library do
       parallel_items = OpenGov::Util::ThreadPool.parallel_map(items) { |n| n * 2 }
       expect(seq_items).to eq(parallel_items)
     end
+
+    it 'captures timeout by default' do
+      items = 1..4
+      parallel_items = OpenGov::Util::ThreadPool.parallel_map(items, timeout: 1) do |n|
+        sleep 5 if n.odd?
+        n * 2
+      end
+      expect(parallel_items).to include(4, 8)
+      expect(parallel_items).not_to include(2, 6)
+      expect(parallel_items.count { |i| Timeout::Error === i }).to eq 2
+    end
+
+    it 'has the ability to raise out of the thread pool' do
+      items = 1..4
+      expect do
+        OpenGov::Util::ThreadPool.parallel_map(items, timeout: 1, capture_timeout: false) do |n|
+          sleep 5 if n.odd?
+          n * 2
+        end
+      end.to raise_exception(Timeout::Error)
+    end
   end
 
   describe '.parallel' do
