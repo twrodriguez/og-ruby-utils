@@ -51,13 +51,13 @@ RSpec.describe OpenGov::Util::Collection, type: :library do
   describe '#parallel_map' do
     it 'works as expected' do
       collection = OpenGov::Util::Collection.new(1..10)
-      block = -> n { n * 2 }
+      block = -> (n) { n * 2 }
       expect(collection.map(&block)).to eq(collection.parallel_map(&block))
     end
 
     it 'works with no concurrency' do
       collection = OpenGov::Util::Collection.new(1..10)
-      block = -> n { n * 2 }
+      block = -> (n) { n * 2 }
       expect(collection.map(&block)).to eq(collection.parallel_map(concurrency_limit: 1, &block))
     end
   end

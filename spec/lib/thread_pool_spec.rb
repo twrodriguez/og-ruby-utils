@@ -21,7 +21,7 @@ RSpec.describe OpenGov::Util::ThreadPool, type: :library do
       end
       expect(parallel_items).to include(4, 8)
       expect(parallel_items).not_to include(2, 6)
-      expect(parallel_items.count { |i| Timeout::Error === i }).to eq 2
+      expect(parallel_items.count { |i| i.is_a? Timeout::Error }).to eq 2
     end
 
     it 'has the ability to raise out of the thread pool' do
@@ -38,8 +38,8 @@ RSpec.describe OpenGov::Util::ThreadPool, type: :library do
   describe '.parallel' do
     it 'returns a hash of items based on a custom block' do
       items = 1..10
-      seq_items = items.each_with_object({}) { |n,memo| memo[n] = n * 2 }
-      parallel_items = OpenGov::Util::ThreadPool.parallel(items, return_key: -> n { n }) { |n| n * 2 }
+      seq_items = items.each_with_object({}) { |n, memo| memo[n] = n * 2 }
+      parallel_items = OpenGov::Util::ThreadPool.parallel(items, return_key: -> (n) { n }) { |n| n * 2 }
       expect(seq_items).to eq(parallel_items)
     end
   end
