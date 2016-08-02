@@ -1,17 +1,27 @@
 class OpenGov::Util::ThreadPool
   class << self
-    attr_accessor :concurrency_limit
-  end
+    def concurrency_limit
+      @concurrency_limit ||= 256
+    end
 
-  # Default Value
-  @concurrency_limit = 256
+    def concurrency_limit=(val)
+      @concurrency_limit = [val.to_i, 1].max
+    end
+  end
 
   #
   # Thread Pool methods
   #
+  attr_reader :limit
+
   def initialize(concurrency_limit = nil)
     @pool = []
-    @limit = concurrency_limit || self.class.concurrency_limit
+    # Squeeze limit between 1 and global @concurrency_limit
+    if concurrency_limit
+      @limit = [[concurrency_limit.to_i, self.class.concurrency_limit.to_i].min, 1].max
+    else
+      @limit = self.class.concurrency_limit
+    end
   end
 
   def push(*args, &block)
@@ -20,7 +30,7 @@ class OpenGov::Util::ThreadPool
       yield(*args)
     else
       @pool << Thread.new(*args, &block)
-      join if @pool.size >= @limit
+      join if @pool.size >= @limit.to_i
     end
   end
 
@@ -53,7 +63,7 @@ class OpenGov::Util::ThreadPool
       opts = {
         timeout: 5,
         capture_timeout: true,
-        concurrency_limit: @concurrency_limit
+        concurrency_limit: concurrency_limit
       }.merge(opts)
 
       thread_returns = {}
