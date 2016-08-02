@@ -115,12 +115,30 @@ RSpec.describe OpenGov::Util::ThreadPool, type: :library do
       expect(elapsed).to be > 0.8
     end
 
-    it 'can overrides the default concurrency_limit' do
-      before_val = OpenGov::Util::ThreadPool.concurrency_limit
-      OpenGov::Util::ThreadPool.concurrency_limit = 42
-      expect(thread_pool.instance_variable_get('@limit')).to eq(42)
+    describe 'global concurrency_limit' do
+      around(:each) do |example|
+        before_val = OpenGov::Util::ThreadPool.concurrency_limit
+        example.call
+        OpenGov::Util::ThreadPool.concurrency_limit = before_val
+      end
 
-      OpenGov::Util::ThreadPool.concurrency_limit = before_val
+      it 'inherits an overriden default concurrency_limit' do
+        OpenGov::Util::ThreadPool.concurrency_limit = 42
+        tpool = OpenGov::Util::ThreadPool.new
+        expect(tpool.limit).to eq(42)
+      end
+
+      it 'limits the individual concurrency_limit to a maximum' do
+        OpenGov::Util::ThreadPool.concurrency_limit = 5
+        tpool = OpenGov::Util::ThreadPool.new(25)
+        expect(tpool.limit).to eq(5)
+      end
+
+      it 'enforces a minimum of 1' do
+        OpenGov::Util::ThreadPool.concurrency_limit = -1
+        tpool = OpenGov::Util::ThreadPool.new(25)
+        expect(tpool.limit).to eq(1)
+      end
     end
   end
 end
