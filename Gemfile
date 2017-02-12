@@ -8,6 +8,7 @@ group :development, :test do
   gem 'yard'
   gem 'rspec'
   gem 'rake'
+  gem 'jeweler'
   gem 'simplecov'
   gem 'rubocop'
   gem 'pry'
