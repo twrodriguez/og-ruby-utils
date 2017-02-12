@@ -1,3 +1,5 @@
+require 'concurrent'
+
 class OpenGov::Util::ThreadPool
   class << self
     def concurrency_limit
@@ -40,6 +42,7 @@ class OpenGov::Util::ThreadPool
 
   def join
     @pool.each(&:join)
+    @pool.each(&:exit)
     @pool.clear
   end
 
@@ -48,13 +51,14 @@ class OpenGov::Util::ThreadPool
   #
   class << self
     def parallel(items, opts = {}, &block)
-      _parallel_exec(items, { return_key: :id.to_proc }.merge(opts), &block)
+      _parallel_exec(items, { return_key: :id.to_proc }.merge(opts), &block).each.to_h
     end
 
     def parallel_map(items, opts = {}, &block)
       thread_returns = _parallel_exec(items, opts - [:return_key], &block)
       thread_returns.size.times.map { |i| thread_returns[i] }
     end
+    alias_method :pmap, :parallel_map
 
     private
 
@@ -66,7 +70,7 @@ class OpenGov::Util::ThreadPool
         concurrency_limit: concurrency_limit
       }.merge(opts)
 
-      thread_returns = {}
+      thread_returns = Concurrent::Map.new
       pool = new(opts[:concurrency_limit])
       items.each_with_index do |item, index|
         if opts[:return_key].is_a? Proc

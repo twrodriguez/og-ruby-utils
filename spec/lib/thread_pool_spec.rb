@@ -46,6 +46,7 @@ RSpec.describe OpenGov::Util::ThreadPool, type: :library do
 
   describe '#initialize' do
     it 'runs things in parallel' do
+      start_thread_size = Thread.list.size
       timer = Time.now
 
       returns = {}
@@ -66,9 +67,12 @@ RSpec.describe OpenGov::Util::ThreadPool, type: :library do
       expect(returns.size).to eq(11)
       expect(returns).to include(0 => 1, 1 => 2, 2 => 3, -1 => 'huzzah')
       expect(elapsed).to be < 0.5
+      sleep 0.1
+      expect(start_thread_size).to eq(Thread.list.size)
     end
 
     it 'runs things in a limited pool' do
+      start_thread_size = Thread.list.size
       timer = Time.now
 
       returns = {}
@@ -90,9 +94,12 @@ RSpec.describe OpenGov::Util::ThreadPool, type: :library do
       expect(returns).to include(0 => 1, 1 => 2, 2 => 3, -1 => 'huzzah')
       expect(elapsed).to be > 0.5
       expect(elapsed).to be < 1.0
+      sleep 0.1
+      expect(start_thread_size).to eq(Thread.list.size)
     end
 
     it 'runs things without spinning off threads' do
+      start_thread_size = Thread.list.size
       timer = Time.now
 
       returns = {}
@@ -113,6 +120,8 @@ RSpec.describe OpenGov::Util::ThreadPool, type: :library do
       expect(returns.size).to eq(11)
       expect(returns).to include(0 => 1, 1 => 2, 2 => 3, -1 => 'huzzah')
       expect(elapsed).to be > 0.8
+      sleep 0.1
+      expect(start_thread_size).to eq(Thread.list.size)
     end
 
     describe 'global concurrency_limit' do
