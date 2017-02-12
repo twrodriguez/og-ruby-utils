@@ -14,7 +14,7 @@ RSpec.describe OpenGov::Util::IdentityLookup, type: :library do
       lookup_hash = OpenGov::Util::IdentityLookup.new
       expect(lookup_hash[1]).to eq(1)
       expect(lookup_hash['a']).to eq('a')
-      expect(lookup_hash[[1,2,3]]).to eq([1,2,3])
+      expect(lookup_hash[[1, 2, 3]]).to eq([1, 2, 3])
     end
 
     it 'can be overridden' do

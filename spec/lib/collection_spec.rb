@@ -73,7 +73,7 @@ RSpec.describe OpenGov::Util::Collection, type: :library do
       collection = OpenGov::Util::Collection.new(hashes)
       expect(collection.find_by(a: 1)).to eq(collection.find { |hsh| hsh[:a] == 1 })
       expect(collection.find_by(a: 3, b: 7)).to eq(collection.find { |hsh| hsh[:a] == 3 && hsh[:b] == 7 })
-      expect(collection.find_by(a: 3, b: nil)).to eq(collection.find { |hsh| hsh[:a] == 3 && hsh[:b] == nil })
+      expect(collection.find_by(a: 3, b: nil)).to eq(collection.find { |hsh| hsh[:a] == 3 && hsh[:b].nil? })
     end
   end
 
