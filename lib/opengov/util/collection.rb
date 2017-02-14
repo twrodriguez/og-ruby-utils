@@ -59,9 +59,14 @@ class OpenGov::Util::Collection
     dup.tap { |c| c.where_not!(conditions) }
   end
 
+  def find_by(conditions = {})
+    find(&_all_block(conditions))
+  end
+
   def parallel_map(parallel_opts = {}, &block)
     OpenGov::Util::ThreadPool.parallel_map(self, parallel_opts, &block)
   end
+  alias_method :pmap, :parallel_map
 
   def respond_to?(method_name)
     super || @enumerable.respond_to?(method_name)

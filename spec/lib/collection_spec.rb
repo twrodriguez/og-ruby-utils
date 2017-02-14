@@ -60,6 +60,21 @@ RSpec.describe OpenGov::Util::Collection, type: :library do
       block = -> (n) { n * 2 }
       expect(collection.map(&block)).to eq(collection.parallel_map(concurrency_limit: 1, &block))
     end
+
+    it 'is aliased as pmap' do
+      collection = OpenGov::Util::Collection.new(1..10)
+      block = -> (n) { n * 2 }
+      expect(collection.map(&block)).to eq(collection.pmap(&block))
+    end
+  end
+
+  describe '#find_by' do
+    it 'uses matchers as an alternative to find' do
+      collection = OpenGov::Util::Collection.new(hashes)
+      expect(collection.find_by(a: 1)).to eq(collection.find { |hsh| hsh[:a] == 1 })
+      expect(collection.find_by(a: 3, b: 7)).to eq(collection.find { |hsh| hsh[:a] == 3 && hsh[:b] == 7 })
+      expect(collection.find_by(a: 3, b: nil)).to eq(collection.find { |hsh| hsh[:a] == 3 && hsh[:b].nil? })
+    end
   end
 
   #
