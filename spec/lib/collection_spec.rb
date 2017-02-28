@@ -8,9 +8,11 @@ RSpec.describe OpenGov::Util::Collection, type: :library do
       { a: 2, b: 3, c: 8 },
       { a: 3, b: 4, c: 7 },
       { a: 4, b: nil, c: 6 },
-      { a: 5, c: 5 }
+      { a: 5, c: 5 },
+      { a: 6, b: { d: 3 } }
     ]
   end
+  let(:hash_collection) { OpenGov::Util::Collection.new(hashes) }
 
   describe '#initialize' do
     it 'can initialize from array-like objects' do
@@ -24,8 +26,7 @@ RSpec.describe OpenGov::Util::Collection, type: :library do
     end
 
     it 'can initialize from array-like objects' do
-      collection = OpenGov::Util::Collection.new(hashes)
-      expect(collection).to contain_exactly(*hashes)
+      expect(hash_collection).to contain_exactly(*hashes)
     end
 
     it 'can\'t initialize from non-enumerable types' do
@@ -70,10 +71,37 @@ RSpec.describe OpenGov::Util::Collection, type: :library do
 
   describe '#find_by' do
     it 'uses matchers as an alternative to find' do
-      collection = OpenGov::Util::Collection.new(hashes)
-      expect(collection.find_by(a: 1)).to eq(collection.find { |hsh| hsh[:a] == 1 })
-      expect(collection.find_by(a: 3, b: 7)).to eq(collection.find { |hsh| hsh[:a] == 3 && hsh[:b] == 7 })
-      expect(collection.find_by(a: 3, b: nil)).to eq(collection.find { |hsh| hsh[:a] == 3 && hsh[:b].nil? })
+      expect(hash_collection.find_by(a: 1)).to eq(hash_collection.find { |hsh| hsh[:a] == 1 })
+      expect(hash_collection.find_by(a: 3, b: 7)).to eq(hash_collection.find { |hsh| hsh[:a] == 3 && hsh[:b] == 7 })
+      expect(hash_collection.find_by(a: 3, b: nil)).to eq(hash_collection.find { |hsh| hsh[:a] == 3 && hsh[:b].nil? })
+    end
+  end
+
+  describe '#rfind' do
+    it 'finds the correct object' do
+      correct_one = { a: 3, b: 3 }
+      hash_collection << correct_one
+      expect(hash_collection.rfind { |h| h[:a] == 3 }).to eq(correct_one)
+    end
+
+    it 'returns nil if the enumerable does not support rindex' do
+      collection = OpenGov::Util::Collection.new([{a: 3}].each)
+      expect(collection.rfind { |h| h[:a] == 3 }).to eq(nil)
+    end
+  end
+
+  describe '#index_by' do
+    it 'supports indexing by arguments for dig OR by block' do
+      expect(hash_collection.index_by(:a)).to eq(hash_collection.index_by { |hsh| hsh[:a] })
+      expect(hash_collection.index_by(:b, :d)).to eq(hash_collection.index_by { |hsh| hsh.dig(:b, :d) })
+    end
+
+    it 'raises if arguments and a block are passed' do
+      expect { hash_collection.index_by(:a) { |hsh| hsh } }.to raise_exception(ArgumentError)
+    end
+
+    it 'returns a OpenGov::Util::LookupHash' do
+      expect(hash_collection.index_by(:a)).to be_an_instance_of(OpenGov::Util::LookupHash)
     end
   end
 
@@ -81,7 +109,7 @@ RSpec.describe OpenGov::Util::Collection, type: :library do
   # Standard Methods
   #
   context 'immediate methods' do
-    subject { OpenGov::Util::Collection.new(hashes) }
+    subject { hash_collection }
     it_behaves_like 'collection' # Using "hashes"
   end
 
@@ -89,7 +117,7 @@ RSpec.describe OpenGov::Util::Collection, type: :library do
   # Lazy
   #
   context 'lazy methods' do
-    subject { OpenGov::Util::Collection.new(hashes).lazy }
+    subject { hash_collection.lazy }
     it_behaves_like 'collection' # Using "hashes"
   end
 end
