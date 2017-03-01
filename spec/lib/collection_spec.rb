@@ -85,7 +85,7 @@ RSpec.describe OpenGov::Util::Collection, type: :library do
     end
 
     it 'returns nil if the enumerable does not support rindex' do
-      collection = OpenGov::Util::Collection.new([{a: 3}].each)
+      collection = OpenGov::Util::Collection.new([{ a: 3 }].each)
       expect(collection.rfind { |h| h[:a] == 3 }).to eq(nil)
     end
   end
