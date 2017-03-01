@@ -27,6 +27,21 @@ class OpenGov::Util::Collection
     end
   end
 
+  def index_by(*dig_args, &block)
+    fail ArgumentError, 'Must provide exactly one argument or a block' if !dig_args.empty? && block_given?
+    block = ->(obj) { obj.dig(*dig_args) } unless dig_args.empty?
+
+    each_with_object(OpenGov::Util::LookupHash.new) do |item, memo|
+      memo[block.call(item)] = item
+    end
+  end
+
+  def rfind(&block)
+    return unless respond_to?(:rindex, true)
+    idx = rindex(&block)
+    idx && at(idx)
+  end
+
   def pluck!(*args)
     map!(&_pluck_block(args))
   end
@@ -68,8 +83,8 @@ class OpenGov::Util::Collection
   end
   alias_method :pmap, :parallel_map
 
-  def respond_to?(method_name)
-    super || @enumerable.respond_to?(method_name)
+  def respond_to?(method_name, *args)
+    super || @enumerable.respond_to?(method_name, *args)
   end
 
   def method_missing(method_name, *args, &block)

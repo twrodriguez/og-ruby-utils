@@ -3,8 +3,8 @@ require_relative 'collection_methods'
 class OpenGov::Util::LazyCollectionEnumerator < ::Enumerator::Lazy
   include OpenGov::Util::CollectionMethods
 
-  def method_missing?(*args)
-    force.send(*args)
+  def method_missing?(*args, &block)
+    force.send(*args, &block)
   end
 
   def pluck(*args)
