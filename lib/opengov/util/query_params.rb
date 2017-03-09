@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 require 'uri'
+require_relative 'collection'
 
 module OpenGov::Util::QueryParams
   module_function
@@ -10,8 +11,9 @@ module OpenGov::Util::QueryParams
     new_params = {}
     params.each do |key, val|
       key = key.to_s
-      if val.is_a?(Array) || val.is_a?(Set)
+      if val.is_any_of?(Array, Set, Enumerator, OpenGov::Util::Collection)
         key += '[]' unless key.end_with?('[]')
+        val = val.to_a
       end
       new_params[key] = val
     end

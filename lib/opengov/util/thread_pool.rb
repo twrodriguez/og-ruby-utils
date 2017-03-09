@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 require 'concurrent'
+require_relative 'thread'
 
 class OpenGov::Util::ThreadPool
   class << self
@@ -32,7 +33,7 @@ class OpenGov::Util::ThreadPool
     if @limit == 1
       yield(*args)
     else
-      @pool << Thread.new(*args, &block)
+      @pool << OpenGov::Util::Thread.new(*args, &block)
       join if @pool.size >= @limit.to_i
     end
   end

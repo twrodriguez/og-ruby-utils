@@ -6,6 +6,7 @@ module OpenGov
   end
 end
 
+require_relative '../core_ext/object'
 require_relative '../core_ext/hash'
 require_relative 'util/default_hash'
 require_relative 'util/nested_hash'
