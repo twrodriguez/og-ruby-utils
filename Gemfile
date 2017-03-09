@@ -8,7 +8,7 @@ gem 'ruby_dig'
 group :development, :test do
   gem 'jeweler'
   gem 'pry'
-  gem 'rake'
+  gem 'rake', '< 12'
   gem 'rspec'
   gem 'rubocop'
   gem 'simplecov'
