@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'concurrent'
 
 class OpenGov::Util::ThreadPool
@@ -19,15 +20,15 @@ class OpenGov::Util::ThreadPool
   def initialize(concurrency_limit = nil)
     @pool = []
     # Squeeze limit between 1 and global @concurrency_limit
-    if concurrency_limit
-      @limit = [[concurrency_limit.to_i, self.class.concurrency_limit.to_i].min, 1].max
-    else
-      @limit = self.class.concurrency_limit
-    end
+    @limit = if concurrency_limit
+               [[concurrency_limit.to_i, self.class.concurrency_limit.to_i].min, 1].max
+             else
+               self.class.concurrency_limit
+             end
   end
 
   def push(*args, &block)
-    fail 'No block provided' unless block_given?
+    raise 'No block provided' unless block_given?
     if @limit == 1
       yield(*args)
     else
@@ -56,14 +57,14 @@ class OpenGov::Util::ThreadPool
 
     def parallel_map(items, opts = {}, &block)
       thread_returns = _parallel_exec(items, opts - [:return_key], &block)
-      thread_returns.size.times.map { |i| thread_returns[i] }
+      Array.new(thread_returns.size) { |i| thread_returns[i] }
     end
-    alias_method :pmap, :parallel_map
+    alias pmap parallel_map
 
     private
 
     def _parallel_exec(items, opts = {})
-      fail 'No block provided' unless block_given?
+      raise 'No block provided' unless block_given?
       opts = {
         timeout: 5,
         capture_timeout: true,
@@ -73,11 +74,11 @@ class OpenGov::Util::ThreadPool
       thread_returns = Concurrent::Map.new
       pool = new(opts[:concurrency_limit])
       items.each_with_index do |item, index|
-        if opts[:return_key].is_a? Proc
-          return_key = opts[:return_key].call(item)
-        else
-          return_key = index
-        end
+        return_key = if opts[:return_key].is_a? Proc
+                       opts[:return_key].call(item)
+                     else
+                       index
+                     end
 
         pool.push do
           begin

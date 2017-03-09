@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'spec_helper'
 require_relative 'common_collection_examples'
 
@@ -9,7 +10,7 @@ RSpec.describe OpenGov::Util::Collection, type: :library do
       { a: 3, b: 4, c: 7 },
       { a: 4, b: nil, c: 6 },
       { a: 5, c: 5 },
-      { a: 6, b: { d: 3 } }
+      { a: 6, e: { d: 3 } }
     ]
   end
   let(:hash_collection) { OpenGov::Util::Collection.new(hashes) }
@@ -52,19 +53,19 @@ RSpec.describe OpenGov::Util::Collection, type: :library do
   describe '#parallel_map' do
     it 'works as expected' do
       collection = OpenGov::Util::Collection.new(1..10)
-      block = -> (n) { n * 2 }
+      block = ->(n) { n * 2 }
       expect(collection.map(&block)).to eq(collection.parallel_map(&block))
     end
 
     it 'works with no concurrency' do
       collection = OpenGov::Util::Collection.new(1..10)
-      block = -> (n) { n * 2 }
+      block = ->(n) { n * 2 }
       expect(collection.map(&block)).to eq(collection.parallel_map(concurrency_limit: 1, &block))
     end
 
     it 'is aliased as pmap' do
       collection = OpenGov::Util::Collection.new(1..10)
-      block = -> (n) { n * 2 }
+      block = ->(n) { n * 2 }
       expect(collection.map(&block)).to eq(collection.pmap(&block))
     end
   end
@@ -93,7 +94,7 @@ RSpec.describe OpenGov::Util::Collection, type: :library do
   describe '#index_by' do
     it 'supports indexing by arguments for dig OR by block' do
       expect(hash_collection.index_by(:a)).to eq(hash_collection.index_by { |hsh| hsh[:a] })
-      expect(hash_collection.index_by(:b, :d)).to eq(hash_collection.index_by { |hsh| hsh.dig(:b, :d) })
+      expect(hash_collection.index_by(:e, :d)).to eq(hash_collection.index_by { |hsh| hsh.dig(:e, :d) })
     end
 
     it 'raises if arguments and a block are passed' do

@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class OpenGov::Util::NestedHash < ::Hash
   def initialize(*)
     super

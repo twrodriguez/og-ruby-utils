@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 RSpec.shared_examples 'collection' do # Assumes "hashes" is defined in a `let` variable
   describe '#where' do
     it 'returns a different subject' do
@@ -34,7 +35,7 @@ RSpec.shared_examples 'collection' do # Assumes "hashes" is defined in a `let` v
       collection_3 = subject.where_not a: 4, b: [2, 3, 4]
 
       expect(collection_2.all? { |item| item[:a] != 4 }).to be true
-      expect(collection_3).to contain_exactly({ a: 5, c: 5 }, a: 6, b: { d: 3 })
+      expect(collection_3).to contain_exactly({ a: 5, c: 5 }, a: 6, e: { d: 3 })
     end
 
     it 'it filters using nil correctly' do

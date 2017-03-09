@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'set'
 
 module OpenGov::Util::CollectionMethods
@@ -39,8 +40,7 @@ module OpenGov::Util::CollectionMethods
 
   def _matcher(value, predicate, _opts = {})
     case predicate
-    when Hash
-      # TODO: Implement deep-match logic
+    # when Hash # TODO: Implement deep-match logic
     when Array, Set
       predicate.include? value
     when Regexp

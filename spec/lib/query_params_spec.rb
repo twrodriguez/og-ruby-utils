@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'spec_helper'
 
 RSpec.describe OpenGov::Util::QueryParams, type: :library do
@@ -20,7 +21,7 @@ RSpec.describe OpenGov::Util::QueryParams, type: :library do
         :hello2 => 'yolo2',
         'hello3' => 'yolo3'
       )
-      expect(encoded_params[1..-1].split('&')).to contain_exactly(*%w(hello2=yolo2 hello3=yolo3 hello1%5B%5D=yolo1 hello1%5B%5D=yolo11))
+      expect(encoded_params[1..-1].split('&')).to contain_exactly('hello2=yolo2', 'hello3=yolo3', 'hello1%5B%5D=yolo1', 'hello1%5B%5D=yolo11')
     end
   end
 

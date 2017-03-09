@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require_relative 'lookup_hash'
 
 class OpenGov::Util::IdentityLookup < OpenGov::Util::LookupHash

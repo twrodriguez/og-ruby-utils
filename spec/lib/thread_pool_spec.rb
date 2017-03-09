@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'spec_helper'
 
 RSpec.describe OpenGov::Util::ThreadPool, type: :library do
@@ -39,7 +40,7 @@ RSpec.describe OpenGov::Util::ThreadPool, type: :library do
     it 'returns a hash of items based on a custom block' do
       items = 1..10
       seq_items = items.each_with_object({}) { |n, memo| memo[n] = n * 2 }
-      parallel_items = OpenGov::Util::ThreadPool.parallel(items, return_key: -> (n) { n }) { |n| n * 2 }
+      parallel_items = OpenGov::Util::ThreadPool.parallel(items, return_key: ->(n) { n }) { |n| n * 2 }
       expect(seq_items).to eq(parallel_items)
     end
   end

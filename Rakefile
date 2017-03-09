@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'jeweler'
 
 VERSION_FILE = File.expand_path('../VERSION', __FILE__)

@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'spec_helper'
 
 RSpec.describe Hash, type: :library do
@@ -17,7 +18,7 @@ RSpec.describe Hash, type: :library do
       symbolized_hash = hash.symbolize_keys
 
       expect(symbolized_hash).not_to eq(hash)
-      expect(symbolized_hash.keys).to contain_exactly(*%i(a b c d))
+      expect(symbolized_hash.keys).to contain_exactly(:a, :b, :c, :d)
       expect(symbolized_hash[:d]).to eq('e' => 4)
     end
   end
