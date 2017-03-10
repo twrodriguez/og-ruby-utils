@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 require 'concurrent'
-require_relative 'thread'
 
 class OpenGov::Util::ThreadPool
   class << self
@@ -33,7 +32,7 @@ class OpenGov::Util::ThreadPool
     if @limit == 1
       yield(*args)
     else
-      @pool << OpenGov::Util::Thread.new(*args, &block)
+      @pool << Thread.new(*args, &block)
       join if @pool.size >= @limit.to_i
     end
   end
@@ -69,7 +68,8 @@ class OpenGov::Util::ThreadPool
       opts = {
         timeout: 5,
         capture_timeout: true,
-        concurrency_limit: concurrency_limit
+        concurrency_limit: concurrency_limit,
+        args: []
       }.merge(opts)
 
       thread_returns = Concurrent::Map.new
@@ -81,10 +81,10 @@ class OpenGov::Util::ThreadPool
                        index
                      end
 
-        pool.push do
+        pool.push(opts[:args]) do |args|
           begin
             Timeout.timeout(opts[:timeout]) do
-              thread_returns[return_key] = yield(item)
+              thread_returns[return_key] = yield(item, *args)
             end
           rescue Timeout::Error => e
             raise unless opts[:capture_timeout]
