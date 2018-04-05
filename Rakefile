@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 require 'jeweler'
 
-VERSION_FILE = File.expand_path('../VERSION', __FILE__)
+VERSION_FILE = File.expand_path('VERSION', __dir__)
 VERSION_STRING = File.read(VERSION_FILE).strip
 Jeweler::Tasks.new do |gem|
   gem.name = 'opengov-util'
@@ -36,4 +38,4 @@ task :rubocop do
   sh 'rubocop .'
 end
 
-task default: [:rubocop, :spec]
+task default: %i[rubocop spec]

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.shared_examples 'collection' do # Assumes "hashes" is defined in a `let` variable
   describe '#where' do
     it 'returns a different subject' do

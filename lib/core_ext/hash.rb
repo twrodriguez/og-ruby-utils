@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'set'
 
 class Hash
@@ -21,18 +23,18 @@ class Hash
   #
   unless instance_methods.include? :select_keys!
     def select_keys!(other = nil, &block)
-      fail ArgumentError, 'Must provide exactly one argument or a block' if other && block_given?
-      fail ArgumentError, 'Must provide one argument or a block' unless other || block_given?
+      raise ArgumentError, 'Must provide exactly one argument or a block' if other && block_given?
+      raise ArgumentError, 'Must provide one argument or a block' unless other || block_given?
 
       unless block_given?
         # type_assert(other, Array, Hash, Set, Regexp)
-        if other.is_a? Regexp
-          block = ->(k) { k =~ other }
-        else
-          block = ->(k) { other.include?(k) }
-        end
+        block = if other.is_a? Regexp
+                  ->(k) { k =~ other }
+                else
+                  ->(k) { other.include?(k) }
+                end
       end
-      self.reject! { |key, _val| !block[key] }
+      select! { |key, _val| block[key] }
     end
   end
 
@@ -41,18 +43,18 @@ class Hash
   #
   unless instance_methods.include? :reject_keys!
     def reject_keys!(other, &block)
-      fail ArgumentError, 'Must provide exactly one argument or a block' if other && block_given?
-      fail ArgumentError, 'Must provide one argument or a block' unless other || block_given?
+      raise ArgumentError, 'Must provide exactly one argument or a block' if other && block_given?
+      raise ArgumentError, 'Must provide one argument or a block' unless other || block_given?
 
       unless block_given?
         # type_assert(other, Array, Hash, Set, Regexp)
-        if other.is_a? Regexp
-          block = ->(k) { k =~ other }
-        else
-          block = ->(k) { other.include?(k) }
-        end
+        block = if other.is_a? Regexp
+                  ->(k) { k =~ other }
+                else
+                  ->(k) { other.include?(k) }
+                end
       end
-      self.reject! { |key, _val| block[key] }
+      reject! { |key, _val| block[key] }
     end
   end
 
@@ -70,8 +72,8 @@ class Hash
   #
   unless instance_methods.include? :select_keys
     def select_keys(other = nil, &block)
-      fail ArgumentError, 'Must provide exactly one argument or a block' if other && block_given?
-      fail ArgumentError, 'Must provide one argument or a block' unless other || block_given?
+      raise ArgumentError, 'Must provide exactly one argument or a block' if other && block_given?
+      raise ArgumentError, 'Must provide one argument or a block' unless other || block_given?
 
       dup.tap { |h| h.select_keys!(other, &block) }
     end
@@ -82,8 +84,8 @@ class Hash
   #
   unless instance_methods.include? :reject_keys
     def reject_keys(other = nil, &block)
-      fail ArgumentError, 'Must provide exactly one argument or a block' if other && block_given?
-      fail ArgumentError, 'Must provide one argument or a block' unless other || block_given?
+      raise ArgumentError, 'Must provide exactly one argument or a block' if other && block_given?
+      raise ArgumentError, 'Must provide one argument or a block' unless other || block_given?
 
       dup.tap { |h| h.reject_keys!(other, &block) }
     end
@@ -111,10 +113,10 @@ class Hash
   # Aliases
   #
   unless instance_methods.include? :&
-    alias_method :&, :select_keys
+    alias & select_keys
   end
 
   unless instance_methods.include? :-
-    alias_method :-, :reject_keys
+    alias - reject_keys
   end
 end

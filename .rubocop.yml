@@ -19,6 +19,9 @@ Lint/AssignmentInCondition:
 Lint/HandleExceptions:
   Enabled: false
 
+Naming/VariableNumber:
+  Enabled: false
+
 # Offense count: 15
 Metrics/AbcSize:
   Max: 75
@@ -46,6 +49,9 @@ Metrics/LineLength:
 Metrics/MethodLength:
   Max: 300
 
+Metrics/BlockLength:
+  Enabled: false
+
 # Offense count: 5
 Metrics/PerceivedComplexity:
   Max: 25
@@ -66,7 +72,7 @@ Style/IfUnlessModifier:
 
 # Offense count: 2
 # Configuration parameters: NamePrefix, NamePrefixBlacklist.
-Style/PredicateName:
+Naming/PredicateName:
   Enabled: false
 
 Style/SingleLineBlockParams:
