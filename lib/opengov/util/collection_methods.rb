@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'set'
 
 module OpenGov::Util::CollectionMethods
@@ -41,6 +43,7 @@ module OpenGov::Util::CollectionMethods
     case predicate
     when Hash
       # TODO: Implement deep-match logic
+      raise 'Unsupported'
     when Array, Set
       predicate.include? value
     when Regexp

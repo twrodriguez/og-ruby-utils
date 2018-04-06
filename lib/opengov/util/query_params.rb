@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'uri'
 
 module OpenGov::Util::QueryParams
@@ -21,7 +23,7 @@ module OpenGov::Util::QueryParams
   def decode(query_string, hsh = {})
     return if query_string.nil? || query_string.empty?
 
-    query_string = URI.unescape(query_string.sub(/\A\?/, ''))
+    query_string = URI.decode_www_form_component(query_string.sub(/\A\?/, ''))
     query_string.split('&').each_with_object(hsh) do |val, params|
       key, val = val.split('=', 2)
       if key.end_with?('[]') || params[key].is_a?(Array)

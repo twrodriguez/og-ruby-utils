@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'collection_methods'
 
 class OpenGov::Util::LazyCollectionEnumerator < ::Enumerator::Lazy

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 RSpec.describe OpenGov::Util::QueryParams, type: :library do
@@ -11,16 +13,16 @@ RSpec.describe OpenGov::Util::QueryParams, type: :library do
     end
 
     it 'encodes params that contain arrays' do
-      expect(OpenGov::Util::QueryParams.encode('hello' => %w(yolo1 yolo2))).to eq('?hello%5B%5D=yolo1&hello%5B%5D=yolo2')
+      expect(OpenGov::Util::QueryParams.encode('hello' => %w[yolo1 yolo2])).to eq('?hello%5B%5D=yolo1&hello%5B%5D=yolo2')
     end
 
     it 'encodes multiple params' do
       encoded_params = OpenGov::Util::QueryParams.encode(
-        'hello1' => %w(yolo1 yolo11),
+        'hello1' => %w[yolo1 yolo11],
         :hello2 => 'yolo2',
         'hello3' => 'yolo3'
       )
-      expect(encoded_params[1..-1].split('&')).to contain_exactly(*%w(hello2=yolo2 hello3=yolo3 hello1%5B%5D=yolo1 hello1%5B%5D=yolo11))
+      expect(encoded_params[1..-1].split('&')).to match_array(%w[hello2=yolo2 hello3=yolo3 hello1%5B%5D=yolo1 hello1%5B%5D=yolo11])
     end
   end
 
@@ -30,7 +32,7 @@ RSpec.describe OpenGov::Util::QueryParams, type: :library do
     end
 
     it 'decodes an array val' do
-      expect(OpenGov::Util::QueryParams.decode('?hello%5B%5D=yolo1&hello%5B%5D=yolo2')).to eq('hello' => %w(yolo1 yolo2))
+      expect(OpenGov::Util::QueryParams.decode('?hello%5B%5D=yolo1&hello%5B%5D=yolo2')).to eq('hello' => %w[yolo1 yolo2])
     end
 
     it 'decodes into an existing custom hash' do

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Need to call .new with valid parameters to trigger the dynamic includes to
 # define modules & methods
 begin
@@ -5,7 +7,7 @@ begin
     aws_access_key_id: '',
     aws_secret_access_key: ''
   )
-rescue
+rescue StandardError
 end
 
 module Fog

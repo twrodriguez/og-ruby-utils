@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'lazy_collection_enumerator'
 require_relative 'thread_pool'
 
@@ -7,7 +9,7 @@ class OpenGov::Util::Collection
 
   def initialize(enum = [])
     unless enum.is_a?(::Enumerable) && enum.respond_to?(:dup)
-      fail TypeError, 'Argument must be a dup-able enumerable object'
+      raise TypeError, 'Argument must be a dup-able enumerable object'
     end
 
     @enumerable = enum
@@ -28,8 +30,16 @@ class OpenGov::Util::Collection
   end
 
   def index_by(*dig_args, &block)
-    fail ArgumentError, 'Must provide exactly one argument or a block' if !dig_args.empty? && block_given?
-    block = ->(obj) { obj.dig(*dig_args) } unless dig_args.empty?
+    raise ArgumentError, 'Must provide exactly one argument or a block' if !dig_args.empty? && block_given?
+    unless dig_args.empty?
+      block = lambda do |obj|
+        begin
+          obj.dig(*dig_args)
+        rescue TypeError
+          nil
+        end
+      end
+    end
 
     each_with_object(OpenGov::Util::LookupHash.new) do |item, memo|
       memo[block.call(item)] = item
@@ -81,13 +91,13 @@ class OpenGov::Util::Collection
   def parallel_map(parallel_opts = {}, &block)
     OpenGov::Util::ThreadPool.parallel_map(self, parallel_opts, &block)
   end
-  alias_method :pmap, :parallel_map
+  alias pmap parallel_map
 
-  def respond_to?(method_name, *args)
-    super || @enumerable.respond_to?(method_name, *args)
+  def respond_to_missing?(method_name, *private_methods)
+    @enumerable.respond_to?(method_name, *private_methods) || super
   end
 
   def method_missing(method_name, *args, &block)
-    @enumerable.send(method_name, *args, &block)
+    respond_to_missing?(method_name) ? @enumerable.send(method_name, *args, &block) : super
   end
 end
