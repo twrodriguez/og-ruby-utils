@@ -34,7 +34,7 @@ RSpec.shared_examples 'collection' do # Assumes "hashes" is defined in a `let` v
       collection_3 = subject.where_not a: 4, b: [2, 3, 4]
 
       expect(collection_2.all? { |item| item[:a] != 4 }).to be true
-      expect(collection_3).to contain_exactly({ a: 5, c: 5 }, a: 6, b: { d: 3 })
+      expect(collection_3).to contain_exactly({ a: 5, c: 5 }, { a: 6, b: { d: 3 } }, a: 7, d: [1, 2, 3])
     end
 
     it 'it filters using nil correctly' do
@@ -56,7 +56,7 @@ RSpec.shared_examples 'collection' do # Assumes "hashes" is defined in a `let` v
 
       expect(subject.all? { |item| item.is_a? Hash }).to be true
       expect(collection_2.all? { |item| item.is_a? Hash }).to be false
-      expect(collection_2).to contain_exactly(1, 2, 3, 4, 5, 6)
+      expect(collection_2).to contain_exactly(1, 2, 3, 4, 5, 6, 7)
     end
 
     it 'plucks with multiple arguments' do
@@ -80,7 +80,7 @@ RSpec.shared_examples 'collection' do # Assumes "hashes" is defined in a `let` v
 
       expect(subject.all? { |item| item.is_a? Hash }).to be true
       expect(collection_2.all? { |item| item.is_a? Hash }).to be true
-      expect(collection_2).to contain_exactly({ a: 1 }, { a: 2 }, { a: 3 }, { a: 4 }, { a: 5 }, a: 6)
+      expect(collection_2).to contain_exactly({ a: 1 }, { a: 2 }, { a: 3 }, { a: 4 }, { a: 5 }, { a: 6 }, a: 7)
     end
 
     it 'plucks with multiple arguments' do

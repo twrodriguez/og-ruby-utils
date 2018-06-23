@@ -3,6 +3,7 @@ require_relative 'thread_pool'
 
 class OpenGov::Util::Collection
   include ::Enumerable
+  include ::Comparable
   include OpenGov::Util::CollectionMethods
 
   def initialize(enum = [])
@@ -11,6 +12,15 @@ class OpenGov::Util::Collection
     end
 
     @enumerable = enum
+  end
+
+  def <=>(other)
+    case other
+    when OpenGov::Util::Collection
+      @enumerable <=> other.instance_variable_get('@enumerable')
+    else
+      @enumerable <=> other
+    end
   end
 
   def dup
@@ -29,7 +39,7 @@ class OpenGov::Util::Collection
 
   def index_by(*dig_args, &block)
     fail ArgumentError, 'Must provide exactly one argument or a block' if !dig_args.empty? && block_given?
-    block = ->(obj) { obj.dig(*dig_args) } unless dig_args.empty?
+    block = ->(obj) { obj.dig(*dig_args) rescue nil } unless dig_args.empty?
 
     each_with_object(OpenGov::Util::LookupHash.new) do |item, memo|
       memo[block.call(item)] = item

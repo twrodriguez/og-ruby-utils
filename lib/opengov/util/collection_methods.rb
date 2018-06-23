@@ -37,12 +37,36 @@ module OpenGov::Util::CollectionMethods
     end
   end
 
-  def _matcher(value, predicate, _opts = {})
+  def _matcher(value, predicate, opts = {})
     case predicate
     when Hash
-      # TODO: Implement deep-match logic
+      return false unless value.is_a?(Hash)
+
+      case opts[:collection_match]
+      when :all?
+        if predicate.empty?
+          value.empty?
+        else
+          _all_block(predicate).call(value)
+        end
+      when :any?
+        _any_block(predicate).call(value)
+      else
+        raise ArgumentError, 'invalid option for predicate match'
+      end
     when Array, Set
-      predicate.include? value
+      if value.is_a?(Array)
+        case opts[:collection_match]
+        when :all?
+          (predicate & value).size == predicate.size
+        when :any?
+          (predicate & value).size > 0
+        else
+          raise ArgumentError, 'invalid option for predicate match'
+        end
+      else
+        predicate.include? value
+      end
     when Regexp
       predicate =~ value
     else

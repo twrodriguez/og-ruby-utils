@@ -9,7 +9,8 @@ RSpec.describe OpenGov::Util::Collection, type: :library do
       { a: 3, b: 4, c: 7 },
       { a: 4, b: nil, c: 6 },
       { a: 5, c: 5 },
-      { a: 6, b: { d: 3 } }
+      { a: 6, b: { d: 3 } },
+      { a: 7, d: [1, 2, 3] }
     ]
   end
   let(:hash_collection) { OpenGov::Util::Collection.new(hashes) }
@@ -75,6 +76,22 @@ RSpec.describe OpenGov::Util::Collection, type: :library do
       expect(hash_collection.find_by(a: 3, b: 7)).to eq(hash_collection.find { |hsh| hsh[:a] == 3 && hsh[:b] == 7 })
       expect(hash_collection.find_by(a: 3, b: nil)).to eq(hash_collection.find { |hsh| hsh[:a] == 3 && hsh[:b].nil? })
     end
+
+    it 'supports nested hash subset matches' do
+      expect(hash_collection.find_by(b: { d: 3 })).to eq(hash_collection.find { |hsh| (hsh.dig(:b, :d) rescue nil) == 3 })
+      expect(hash_collection.find_by(b: { d: 9999 })).to eq(nil)
+      expect(hash_collection.find_by(b: {})).to eq(nil)
+      expect(hash_collection.where_not(b: { d: 3 }).to_a).to eq(hash_collection.reject { |hsh| (hsh.dig(:b, :d) rescue nil) == 3 })
+      expect(hash_collection.where_not(b: {})).to eq(hash_collection)
+      expect(hash_collection.where_not(b: { d: 9999 })).to eq(hash_collection)
+    end
+
+    it 'support array subset matching' do
+      expect(hash_collection.find_by(d: [3])).to eq(hash_collection.find { |hsh| hsh[:d]&.include?(3) })
+      expect(hash_collection.find_by(d: [9999])).to eq(nil)
+      expect(hash_collection.where_not(d: [3]).to_a).to eq(hash_collection.reject { |hsh| hsh[:d]&.include?(3) })
+      expect(hash_collection.where_not(d: [9999])).to eq(hash_collection)
+    end
   end
 
   describe '#rfind' do
@@ -93,7 +110,7 @@ RSpec.describe OpenGov::Util::Collection, type: :library do
   describe '#index_by' do
     it 'supports indexing by arguments for dig OR by block' do
       expect(hash_collection.index_by(:a)).to eq(hash_collection.index_by { |hsh| hsh[:a] })
-      expect(hash_collection.index_by(:b, :d)).to eq(hash_collection.index_by { |hsh| hsh.dig(:b, :d) })
+      expect(hash_collection.index_by(:b, :d)).to eq(hash_collection.index_by { |hsh| hsh.dig(:b, :d) rescue nil })
     end
 
     it 'raises if arguments and a block are passed' do
